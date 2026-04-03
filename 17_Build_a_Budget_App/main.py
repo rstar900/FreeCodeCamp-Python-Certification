@@ -56,9 +56,9 @@ def create_spend_chart(categories):
                 withdrawals += -dictionary['amount']
         spent_dictionary[category.name] = withdrawals
         spent_total += withdrawals
-    # Divide the spent percentages by total spent amount and round to nearest 10 for each category (round (perc, -1))
+    # Divide the spent percentages by total spent amount and remove the decimal part by converting into int
     for category in categories:
-        spent_dictionary[category.name] = int(round((spent_dictionary[category.name] / spent_total) * 100, -1))
+        spent_dictionary[category.name] = int((spent_dictionary[category.name] / spent_total) * 100) 
     # Create the Y-Axis till 100
     for y in range(100, -1,-10):
         result_str += f'\n{y:>3}| '
@@ -72,17 +72,13 @@ def create_spend_chart(categories):
     # Create the horizontal lines
     horizontal_lines = 1 + 3 * len(categories)
     result_str += '\n' + 4 * ' ' + horizontal_lines * '-'
-    # TODO: Print category names vertically
-
-    return result_str + '\n' + str(spent_dictionary)
-
-# Test Code
-food = Category('Food')
-food.deposit(1000, 'initial deposit')
-food.withdraw(10.15, 'groceries')
-food.withdraw(15.89, 'restaurant and more food for dessert')
-clothing = Category('Clothing')
-food.transfer(50, clothing)
-auto = Category('Auto')
-#print(food)
-print(create_spend_chart([food, clothing, auto]))   
+    # Get the largest category length to determine how many more lines to print
+    category_lines = max(len(category.name) for category in categories)
+    for index in range(category_lines):
+        result_str += '\n' + 5 * ' '
+        for category in categories:
+            if index < len(category.name):
+                result_str += category.name[index] + '  '
+            else:
+                result_str += '   '
+    return result_str   
